@@ -28,6 +28,7 @@ dependencies {
 val dockerImage = "pandemieduell/server:${project.version}"
 val dockerUser: String? by project
 val dockerPassword: String? by project
+val deploymentSrc = "${project.rootDir}/src/deployment/kubernetes"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -55,10 +56,9 @@ dockerRun {
 }
 
 gradleFileEncrypt {
-    files = fileTree("src/deployment/kubernetes") {
-        include("**/*.secret.*")
-        exclude("**/*.encrypted")
-    }.files.toTypedArray()
+    files = arrayOf(
+        "$deploymentSrc/deployment-account/kubeconfig.secret.json"
+    )
 }
 
 task("lint") {
@@ -83,7 +83,7 @@ task("push") {
 
 val writeDeploymentParameters by tasks.creating {
     group = "deployment"
-    val templateFiles = fileTree("src/deployment/kubernetes") {
+    val templateFiles = fileTree(deploymentSrc) {
         include("**/*.tpl.*")
     }.files
 
@@ -129,13 +129,13 @@ fun kubectlDeployTask(
     block()
 }
 
-val deploymentKubeConfig = "${project.rootDir}/src/deployment/kubernetes/deployment-account/kubeconfig.secret.json"
+val deploymentKubeConfig = "$deploymentSrc/deployment-account/kubeconfig.secret.json"
 val deployDeploymentAccount by kubectlDeployTask(
-    kustomization = "src/deployment/kubernetes/deployment-account",
+    kustomization = "$deploymentSrc/deployment-account",
     commonTag = "component" to "deployment-account"
 )
 val deployServer by kubectlDeployTask(
-    kustomization = "src/deployment/kubernetes/server",
+    kustomization = "$deploymentSrc/server",
     commonTag = "component" to "server",
     kubeconfig = deploymentKubeConfig
 )
