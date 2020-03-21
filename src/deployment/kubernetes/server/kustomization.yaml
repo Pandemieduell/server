@@ -1,0 +1,4 @@
+commonLabels:
+  component: server
+resources:
+  - server.filled.yaml
