@@ -1,4 +1,3 @@
 package de.pandemieduell.model;
 
-public interface PandemicCard extends Card {
-}
+public interface PandemicCard extends Card {}

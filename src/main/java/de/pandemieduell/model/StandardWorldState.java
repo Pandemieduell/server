@@ -1,17 +1,17 @@
 package de.pandemieduell.model;
 
 public class StandardWorldState implements MutableWorldState {
-    //Zustandseigenschaften
-    private long healthyPopulation;
-    private long infectedPopulation;
-    private long immunePopulation;
-    private long deadPopulation;
+  // Zustandseigenschaften
+  private long healthyPopulation;
+  private long infectedPopulation;
+  private long immunePopulation;
+  private long deadPopulation;
 
-    private long healthSystemCapacity;
-    private int populationMorale;
-    private long stateAssets;
+  private long healthSystemCapacity;
+  private int populationMorale;
+  private long stateAssets;
 
-    //Zustandsübergangseigenschaften
-    private double caseFatalityRate;
-    private double infectionRate;
+  // Zustandsübergangseigenschaften
+  private double caseFatalityRate;
+  private double infectionRate;
 }

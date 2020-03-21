@@ -1,6 +1,6 @@
 package de.pandemieduell.model;
 
 public class User {
-    private String username;
-    private long id;
+  private String username;
+  private long id;
 }
