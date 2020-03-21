@@ -27,6 +27,8 @@ jobs:
           java-version: 11
       - name: Prepare
         run: ./gradlew clean dependencies
+      - name: Check Secret Files
+        run: ./gradlew checkFilesGitIgnored
       - name: Lint
         run: ./gradlew lint
       - name: Build
@@ -37,4 +39,5 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: ./gradlew push
         env:
-          ORG_GRADLE_PROJECT_githubToken: ${{ github.token }}
+          ORG_GRADLE_PROJECT_dockerUser: ${{ secrets.DOCKER_USER }}
+          ORG_GRADLE_PROJECT_dockerPassword: ${{ secrets.DOCKER_PASSWORD }}
