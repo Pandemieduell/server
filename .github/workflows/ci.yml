@@ -27,6 +27,6 @@ jobs:
       - name: Lint
         run: ./gradlew lint
       - name: Build
-        run: ./gradlew assemble
+        run: ./gradlew buildDocker testClasses
       - name: Test
         run: ./gradlew test
