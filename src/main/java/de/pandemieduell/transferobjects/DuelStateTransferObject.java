@@ -1,4 +1,3 @@
 package de.pandemieduell.transferobjects;
 
-public class DuelStateTransferObject {
-}
+public class DuelStateTransferObject {}

@@ -1,4 +1,3 @@
 package de.pandemieduell.transferobjects;
 
-public class RoundTransferObject {
-}
+public class RoundTransferObject {}
