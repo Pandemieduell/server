@@ -30,19 +30,17 @@ spec:
           volumeMounts:
             - name: mongo-data
               mountPath: /data/db
+        - name: mongo-sidecar
+          image: cvallance/mongo-k8s-sidecar
+          env:
+            - name: MONGO_SIDECAR_POD_LABELS
+              value: component=mongo
   volumeClaimTemplates:
     - metadata:
         name: mongo-data
-        annotations:
-          ibm.io/auto-create-bucket: "true"
-          ibm.io/auto-delete-bucket: "false"
-          ibm.io/bucket: pandemieduell-mongo
-          ibm.io/secret-name: pandemieduell-storage-s3-access
-          #volume.beta.kubernetes.io/storage-class: "ibmc-s3fs-standard-regional"
-          #volume.beta.kubernetes.io/storage-provisioner: "ibm.io/ibmc-s3fs"
       spec:
         accessModes: [ ReadWriteOnce ]
-        storageClassName: ibmc-s3fs-standard-regional
+        storageClassName: fast
         resources:
           requests:
-            storage: 5Gi
+            storage: 20Gi

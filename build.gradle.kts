@@ -28,6 +28,7 @@ val dockerImage = "pandemieduell/server:${project.version}"
 val dockerUser: String? by project
 val dockerPassword: String? by project
 val deploymentSrc = "${project.rootDir}/src/deployment/kubernetes"
+val deploymentKubeConfig = "$deploymentSrc/deployment-account/kubeconfig.secret.yaml"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -55,9 +56,7 @@ dockerRun {
 }
 
 gradleFileEncrypt {
-    files = arrayOf(
-        "$deploymentSrc/deployment-account/kubeconfig.secret.json"
-    )
+    files = arrayOf(deploymentKubeConfig)
 }
 
 task("lint") {
@@ -128,7 +127,6 @@ fun kubectlDeployTask(
     block()
 }
 
-val deploymentKubeConfig = "$deploymentSrc/deployment-account/kubeconfig.secret.json"
 val deployDeploymentAccount by kubectlDeployTask(
     kustomization = "$deploymentSrc/deployment-account",
     commonTag = "component" to "deployment-account"
@@ -142,11 +140,13 @@ val deployServer by kubectlDeployTask(
     kustomization = "$deploymentSrc/server",
     commonTag = "component" to "server",
     kubeconfig = deploymentKubeConfig
-)
+) {
+    mustRunAfter(deployDatabase)
+}
 
 task("deploy") {
     group = "deployment"
-    dependsOn(deployServer)
+    dependsOn(deployDatabase, deployServer)
 }
 
 val Project.versionDetails
