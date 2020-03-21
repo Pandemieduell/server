@@ -1,8 +1,6 @@
 package de.pandemieduell.api;
 
 import de.pandemieduell.model.Duel;
-import de.pandemieduell.model.GameState;
-import de.pandemieduell.model.Round;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
