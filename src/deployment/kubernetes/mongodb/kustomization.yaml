@@ -1,0 +1,5 @@
+commonLabels:
+  component: mongo
+resources:
+  - headless-service.yaml
+  - statefulset.yaml

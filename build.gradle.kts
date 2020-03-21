@@ -133,6 +133,11 @@ val deployDeploymentAccount by kubectlDeployTask(
     kustomization = "$deploymentSrc/deployment-account",
     commonTag = "component" to "deployment-account"
 )
+val deployDatabase by kubectlDeployTask(
+    kustomization = "$deploymentSrc/mongodb",
+    commonTag = "component" to "mongo",
+    kubeconfig = deploymentKubeConfig
+)
 val deployServer by kubectlDeployTask(
     kustomization = "$deploymentSrc/server",
     commonTag = "component" to "server",

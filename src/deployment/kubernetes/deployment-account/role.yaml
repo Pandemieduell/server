@@ -4,7 +4,10 @@ metadata:
   name: github-deployment-namespace
 rules:
   - apiGroups: [apps]
-    resources: [deployments]
+    resources: [deployments, statefulsets]
+    verbs: [create, update, patch, delete]
+  - apiGroups: ['']
+    resources: [services]
     verbs: [create, update, patch, delete]
   - apiGroups: ['']
     resources: [secrets]
