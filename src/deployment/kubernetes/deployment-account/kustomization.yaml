@@ -1,0 +1,6 @@
+commonLabels:
+  component: deployment-account
+resources:
+  - service-account.yaml
+  - role.yaml
+  - rolebinding.yaml

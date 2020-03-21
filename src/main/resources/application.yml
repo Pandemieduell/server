@@ -1,0 +1,10 @@
+spring:
+  main:
+    banner-mode: off
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /
