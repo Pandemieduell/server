@@ -1,3 +1,8 @@
 package de.pandemieduell.transferobjects;
 
-public class DuelStateTransferObject {}
+import de.pandemieduell.model.GameState;
+
+public class DuelStateTransferObject {
+  GameState duelState;
+  int currentRoundNumber;
+}

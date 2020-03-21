@@ -36,11 +36,11 @@ public class GamesController {
     return null; // TODO implement
   }
 
-  @GetMapping(value = "games/{gameId}/rounds/{roundId}")
+  @GetMapping(value = "games/{gameId}/rounds/{roundNumber}")
   public RoundTransferObject getRound(
       @RequestHeader("Authorization") String authorization,
       @PathVariable String gameId,
-      @PathVariable String roundId) {
+      @PathVariable int roundNumber) {
     return null;
   }
 

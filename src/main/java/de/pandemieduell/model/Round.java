@@ -7,4 +7,5 @@ public class Round {
   private List<GovernmentCard> governmentCards;
   private List<PandemicCard> pandemicCards;
   private WorldState state;
+  private List<GameAction> executedActions;
 }
