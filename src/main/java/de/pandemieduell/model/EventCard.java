@@ -1,4 +1,4 @@
-package de.pandemieduell.model.cards;
+package de.pandemieduell.model;
 
 import de.pandemieduell.model.Card;
 
