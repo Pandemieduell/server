@@ -11,13 +11,6 @@ plugins {
 
 group = "de.pandemieduell"
 version = versionDetails.gitHash
-val dockerImage = "pandemieduell/server:${project.version}"
-val dockerUser: String? by project
-val dockerPassword: String? by project
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-}
 
 repositories {
     mavenCentral()
@@ -30,6 +23,14 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+}
+
+val dockerImage = "pandemieduell/server:${project.version}"
+val dockerUser: String? by project
+val dockerPassword: String? by project
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 tasks.withType<Test> {
@@ -99,11 +100,16 @@ val writeDeploymentParameters by tasks.creating {
     }
 }
 
-fun kubectlDeployTask(kustomizationPath: String, commonTag: Pair<String, String>, block: Exec.() -> Unit = {}) = tasks.creating(Exec::class) {
+fun kubectlDeployTask(
+    kustomization: String,
+    commonTag: Pair<String, String>,
+    kubeconfig: String? = null,
+    block: Exec.() -> Unit = {}
+) = tasks.creating(Exec::class) {
     group = "deployment"
     dependsOn(writeDeploymentParameters)
 
-    inputs.files(fileTree(kustomizationPath) {
+    inputs.files(fileTree(kustomization) {
         exclude("*.encrypted")
         exclude("*.tpl.*")
     })
@@ -111,15 +117,27 @@ fun kubectlDeployTask(kustomizationPath: String, commonTag: Pair<String, String>
     commandLine(
         "kubectl", "apply",
         "--kustomize", ".",
-        "--wait",
         "--prune",
-        "--selector", "${commonTag.first}=${commonTag.second}"
+        "--selector", "${commonTag.first}=${commonTag.second}",
+        "--wait"
     )
-    workingDir(kustomizationPath)
+    workingDir(kustomization)
+    if (kubeconfig != null) {
+        environment("KUBECONFIG", kubeconfig)
+    }
     block()
 }
 
-val deployServer by kubectlDeployTask("src/deployment/kubernetes/server", "component" to "server")
+val deploymentKubeConfig = "${project.rootDir}/src/deployment/kubernetes/deployment-account/kubeconfig.secret.json"
+val deployDeploymentAccount by kubectlDeployTask(
+    kustomization = "src/deployment/kubernetes/deployment-account",
+    commonTag = "component" to "deployment-account"
+)
+val deployServer by kubectlDeployTask(
+    kustomization = "src/deployment/kubernetes/server",
+    commonTag = "component" to "server",
+    kubeconfig = deploymentKubeConfig
+)
 
 task("deploy") {
     group = "deployment"

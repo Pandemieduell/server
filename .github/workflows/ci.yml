@@ -7,8 +7,8 @@ on:
 
 jobs:
 
-  ci:
-    name: CI
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,9 +35,23 @@ jobs:
         run: ./gradlew buildDocker testClasses
       - name: Test
         run: ./gradlew test
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+#    if: github.ref == 'refs/heads/master'
+    steps:
       - name: Push
         if: github.ref == 'refs/heads/master'
         run: ./gradlew push
         env:
           ORG_GRADLE_PROJECT_dockerUser: ${{ secrets.DOCKER_USER }}
           ORG_GRADLE_PROJECT_dockerPassword: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Decrypt
+        run: ./gradlew decryptFiles
+        env:
+          GFE_PASSWORD: ${{ secrets.ENCRYPTION_KEY }}
+      - name: Deploy
+        run: ./gradlew deploy
+
+
