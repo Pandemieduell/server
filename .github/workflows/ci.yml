@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: |
+            gradle-${{ runner.os }}
+            gradle-
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Prepare
+        run: ./gradlew clean dependencies
+      - name: Lint
+        run: ./gradlew lint
+      - name: Build
+        run: ./gradlew buildDocker testClasses
+      - name: Test
+        run: ./gradlew test
+      - name: Push
+        if: github.ref == 'refs/heads/master'
+        run: ./gradlew push
+        env:
+          ORG_GRADLE_PROJECT_githubToken: ${{ github.token }}
