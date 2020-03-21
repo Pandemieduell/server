@@ -27,3 +27,11 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+task("lint") {
+    dependsOn(tasks["verifyGoogleJavaFormat"])
+}
+
+task("fixStyle") {
+    dependsOn(tasks["googleJavaFormat"])
+}
+
