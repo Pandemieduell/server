@@ -11,6 +11,7 @@ plugins {
 group = "de.pandemieduell"
 version = versionDetails.gitHash
 val dockerImage = "docker.pkg.github.com/pandemieduell/server/${project.name}:${project.version}"
+val githubToken: String? by project
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -35,6 +36,12 @@ tasks.withType<Test> {
 jib {
     to {
         image = dockerImage
+        if (githubToken != null) {
+            auth {
+                username = "ci"
+                password = githubToken
+            }
+        }
     }
 }
 
@@ -44,15 +51,23 @@ dockerRun {
 }
 
 task("lint") {
+    group = "verification"
     dependsOn(tasks["verifyGoogleJavaFormat"])
 }
 
 task("fixStyle") {
+    group = "verification"
     dependsOn(tasks["googleJavaFormat"])
 }
 
 task("buildDocker") {
+    group = "build"
     dependsOn("jibDockerBuild")
+}
+
+task("push") {
+    group = "publishing"
+    dependsOn("jib")
 }
 
 val Project.versionDetails
