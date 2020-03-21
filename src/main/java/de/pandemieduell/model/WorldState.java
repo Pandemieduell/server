@@ -1,6 +1,3 @@
 package de.pandemieduell.model;
 
-public interface WorldState {
-
-
-}
+public interface WorldState {}
