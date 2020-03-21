@@ -1,11 +1,14 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
 
 jobs:
 
-  test:
-    name: Test
+  ci:
+    name: CI
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,3 +33,8 @@ jobs:
         run: ./gradlew buildDocker testClasses
       - name: Test
         run: ./gradlew test
+      - name: Push
+        if: github.ref == 'refs/heads/master'
+        run: ./gradlew push
+        env:
+          ORG_GRADLE_PROJECT_githubToken: ${{ github.token }}
