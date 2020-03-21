@@ -42,8 +42,21 @@ jobs:
     runs-on: ubuntu-latest
 #    if: github.ref == 'refs/heads/master'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: |
+            gradle-${{ runner.os }}
+            gradle-
       - name: Push
-        if: github.ref == 'refs/heads/master'
         run: ./gradlew push
         env:
           ORG_GRADLE_PROJECT_dockerUser: ${{ secrets.DOCKER_USER }}
