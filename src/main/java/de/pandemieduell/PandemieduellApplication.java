@@ -1,4 +1,4 @@
-package de.pandemieduell.server;
+package de.pandemieduell;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
