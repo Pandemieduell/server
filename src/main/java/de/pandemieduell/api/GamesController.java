@@ -40,7 +40,7 @@ public class GamesController {
     }
 
     @RequestMapping(value = "game/{gameId}/cancel", method = RequestMethod.DELETE)
-    public void cancelGame(@PathVariable long gameId){
+    public void cancelGame(@PathVariable long gameId) {
         //TODO implement
     }
 }
