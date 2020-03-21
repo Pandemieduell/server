@@ -7,12 +7,15 @@ import static de.pandemieduell.api.Authorization.getUserCredentials;
 
 import com.mongodb.client.MongoClients;
 import de.pandemieduell.api.exceptions.NotFoundException;
+import de.pandemieduell.api.exceptions.UnprocessableEntryException;
 import de.pandemieduell.model.Duel;
 import de.pandemieduell.model.GameState;
 import de.pandemieduell.model.Player;
 import de.pandemieduell.transferobjects.CreateUserTransferObject;
 import de.pandemieduell.transferobjects.DuelStateTransferObject;
 import de.pandemieduell.transferobjects.RoundTransferObject;
+
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.catalina.User;
@@ -54,20 +57,23 @@ public class GamesController {
     if (randomMatching) {
       List<Duel> opens_duels = mongoTemplate.find(query(where("game_state").is(GameState.INCOMPLETE)), Duel.class, "duel-matchmaking-public");
 
-      if (opens_duels.size() == 0) {
-        Duel new_duel = new Duel(player);
-        mongoTemplate.save(new_duel, "duel-matchmaking-public");
+      for (Duel selected : opens_duels) {
+        if (selected.getGovernmentPlayer().getId().equals(player.getId())) {
+          continue;
+        } else {
+          selected.addPandemicPlayer(player);
 
-        return new_duel.getId();
-      } else {
-        Duel selected = opens_duels.get(0);
-        selected.addPandemicPlayer(player);
+          mongoTemplate.findAndRemove(query(where("id").is(selected.getId())), Duel.class, "duel-matchmaking-public");
+          mongoTemplate.save(selected, "running-duels");
 
-        mongoTemplate.findAndRemove(query(where("id").is(selected.getId())), Duel.class, "duel-matchmaking-public");
-        mongoTemplate.save(selected, "running-duels");
-
-        return selected.getId();
+          return selected.getId();
+        }
       }
+
+      Duel new_duel = new Duel(player);
+      mongoTemplate.save(new_duel, "duel-matchmaking-public");
+
+      return new_duel.getId();
     } else {
       Duel new_duel = new Duel(player);
 
@@ -86,6 +92,9 @@ public class GamesController {
     Duel private_duel = mongoTemplate.findOne(query(where("id").is(gameId)), Duel.class, "duel-matchmaking-private");
     if (private_duel == null)
       throw new NotFoundException("Duel not found!");
+
+    if (private_duel.getGovernmentPlayer().getId().equals(player.getId()))
+      throw new UnprocessableEntryException("Player is not allowed play against himself!");
 
     private_duel.addPandemicPlayer(player);
     mongoTemplate.findAndRemove(query(where("id").is(gameId)), Duel.class, "duel-matchmaking-private");
@@ -125,6 +134,16 @@ public class GamesController {
   @DeleteMapping(value = "game/{gameId}")
   public void cancelGame(
       @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
-    // TODO implement
+    var userCredentials = getUserCredentials(authorization);
+    Player player = findPlayer(userCredentials.getId());
+
+    Duel duel = mongoTemplate.findOne(query(where("id").is(gameId)), Duel.class, "running-duels");
+    if (duel == null)
+      throw new NotFoundException("Game not found!");
+
+    // TODO Set Game state to cancelled!
+
+    mongoTemplate.findAndRemove(query(where("id").is(gameId)), Duel.class, "running-duels");
+    mongoTemplate.save(duel, "finished-duels");
   }
 }
