@@ -27,12 +27,10 @@ jobs:
           java-version: 11
       - name: Prepare
         run: ./gradlew clean dependencies
-      - name: Check Secret Files
-        run: ./gradlew checkFilesGitIgnored
       - name: Lint
         run: ./gradlew lint
-      - name: Build
-        run: ./gradlew buildDocker testClasses
+      - name: Compile
+        run: ./gradlew classes testClasses
       - name: Test
         run: ./gradlew test
 
@@ -40,14 +38,10 @@ jobs:
     name: Deploy
     needs: test
     runs-on: ubuntu-latest
-#    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
       - name: Cache
         uses: actions/cache@v1
         with:
@@ -56,6 +50,12 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}
             gradle-
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Version
+        run: ./gradlew printVersion
       - name: Push
         run: ./gradlew push
         env:
