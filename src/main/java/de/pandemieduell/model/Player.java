@@ -1,9 +1,16 @@
 package de.pandemieduell.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import java.util.UUID;
 
 public class Player {
+  @Field("username")
   private String username;
+
+  @Id
+  @Field("id")
   private String id;
 
   public Player(String username) {
