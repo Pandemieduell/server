@@ -1,13 +1,12 @@
 package de.pandemieduell.api;
 
+import static de.pandemieduell.api.Authorization.getUserCredentials;
+
 import de.pandemieduell.transferobjects.CreateUserTransferObject;
 import de.pandemieduell.transferobjects.DuelStateTransferObject;
 import de.pandemieduell.transferobjects.RoundTransferObject;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
-import static de.pandemieduell.api.Authorization.getUserCredentials;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class GamesController {

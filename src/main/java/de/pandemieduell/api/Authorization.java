@@ -1,11 +1,10 @@
 package de.pandemieduell.api;
 
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Base64;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
+import java.util.Base64;
+import org.springframework.web.server.ResponseStatusException;
 
 public final class Authorization {
   private Authorization() {}
