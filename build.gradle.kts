@@ -57,6 +57,7 @@ dockerRun {
 gradleFileEncrypt {
     files = fileTree("src/deployment/kubernetes") {
         include("**/*.secret.*")
+        exclude("**/*.encrypted")
     }.files.toTypedArray()
 }
 
