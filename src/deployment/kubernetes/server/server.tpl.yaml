@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+spec:
+  selector: {}
+  replicas: 2
+  template:
+    metadata:
+      name: server
+    spec:
+      containers:
+        - name: server
+          image: $DOCKER_IMAGE
+          ports:
+            - containerPort: 8080
+              name: web
+            - containerPort: 8081
+              name: health
+          livenessProbe:
+            httpGet:
+              port: health
+              path: /health
+            initialDelaySeconds: 15
+            timeoutSeconds: 15
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
