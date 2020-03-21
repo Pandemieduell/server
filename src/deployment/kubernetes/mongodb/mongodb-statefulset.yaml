@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  serviceName: "mongo"
+  replicas: 1
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      terminationGracePeriodSeconds: 10
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - mongo
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: mongo
+          image: mongo
+          command:
+            - mongod
+            - "--bind_ip_all"
+            - "--replSet"
+            - rs0
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+        annotations:
+          ibm.io/auto-create-bucket: "true"
+          ibm.io/auto-delete-bucket: "true"
+          ibm.io/bucket: "pandemieduell-data"
+          ibm.io/secret-name: "pandemieduell-storage-s3-access"
+          volume.beta.kubernetes.io/storage-class: "ibmc-s3fs-standard-regional"
+          volume.beta.kubernetes.io/storage-provisioner: "ibm.io/ibmc-s3fs"
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "ibmc-s3fs-standard-regional"
+        resources:
+          requests:
+            storage: 1Gi
