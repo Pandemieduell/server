@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: pandemieduell-server-ipv4
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.global-static-ip-name: pandemieduell-ipv4
+spec:
+  tls:
+    - hosts: [api.pandemieduell.de]
+      secretName: pandemieduell-tls-ipv4
+  rules:
+    - host: api.pandemieduell.de
+      http:
+        paths:
+          - backend:
+              serviceName: pandemieduell-server
+              servicePort: web
+---
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: pandemieduell-server-ipv6
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: pandemieduell-ipv6
+spec:
+  tls:
+    - hosts: [api.pandemieduell.de]
+      secretName: pandemieduell-tls-ipv6
+  rules:
+    - host: api.pandemieduell.de
+      http:
+        paths:
+          - backend:
+              serviceName: pandemieduell-server
+              servicePort: web
+
+

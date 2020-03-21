@@ -1,4 +1,6 @@
 commonLabels:
   component: server
 resources:
-  - server.filled.yaml
+  - deployment.filled.yaml
+  - service.yaml
+  - ingress.yaml
