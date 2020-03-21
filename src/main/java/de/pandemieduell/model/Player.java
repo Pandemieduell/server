@@ -1,6 +1,6 @@
 package de.pandemieduell.model;
 
-public class User {
+public class Player {
   private String username;
-  private long id;
+  private String id;
 }

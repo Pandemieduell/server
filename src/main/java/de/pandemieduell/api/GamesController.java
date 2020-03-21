@@ -7,41 +7,41 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class GamesController {
 
-  @RequestMapping(value = "/registerUser", method = RequestMethod.POST, consumes = "text/plain")
-  public long registerUser(@RequestBody String username) {
-    return 0; // TODO implement
+  @PostMapping(value = "/users", consumes = "text/plain")
+  public String registerUser(@RequestBody String username) {
+    return null; // TODO implement
   }
 
-  @RequestMapping(value = "/joinGame", method = RequestMethod.GET)
-  public long joinGame(@RequestParam("playerId") long playerId) {
-    return 0; // TODO implement
+  @PostMapping(value = "/games")
+  public String joinGame(@RequestParam("playerId") String playerId) {
+    return null; // TODO implement
   }
 
-  @RequestMapping(value = "games/{gameId}/currentRound", method = RequestMethod.GET)
+  @GetMapping(value = "games/{gameId}/currentRound")
   public Round getCurrentRound(@PathVariable long gameId) {
     return null; // TODO implement
   }
 
-  @RequestMapping(value = "games/{gameId}/round/{roundId}", method = RequestMethod.GET)
+  @GetMapping(value = "games/{gameId}/round/{roundId}")
   public Round getRound(@PathVariable long gameId, @PathVariable long roundId) {
     return null; // TODO implement
   }
 
-  @RequestMapping(value = "games/{gameId}/state", method = RequestMethod.GET)
+  @GetMapping(value = "games/{gameId}/state")
   public GameState getCurrentGameState(@PathVariable long gameId) {
     return null; // TODO implement
   }
 
-  @RequestMapping(value = "games/{gameId}/card")
+  @PostMapping(value = "games/{gameId}/card")
   public void playCard(
-      @PathVariable long gameId,
-      @RequestParam("playerId") long playerId,
+      @PathVariable String gameId,
+      @RequestParam("playerId") String playerId,
       @RequestParam("cardNumber") int cardNumber) {
     // TODO implement
   }
 
-  @RequestMapping(value = "game/{gameId}/cancel", method = RequestMethod.DELETE)
-  public void cancelGame(@PathVariable long gameId) {
+  @PostMapping(value = "game/{gameId}/cancel")
+  public void cancelGame(@PathVariable String gameId) {
     // TODO implement
   }
 }

@@ -1,6 +1,6 @@
 package de.pandemieduell.model;
 
-public interface Action {
+public interface GameAction {
   boolean isApplicable(int round, WorldState state);
 
   void updateWorldState(MutableWorldState state);
