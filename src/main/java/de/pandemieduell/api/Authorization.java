@@ -22,12 +22,12 @@ public final class Authorization {
         try {
             decoded = Base64.getDecoder().decode(base64Credentials);
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(UNAUTHORIZED, "Bad atuhorization was provided: malformed base64!", e);
+            throw new ResponseStatusException(UNAUTHORIZED, "Bad authorization was provided: malformed base64!", e);
         }
         String credentials = new String(decoded, UTF_8);
         final String[] values = credentials.split(":", 2);
         if (values.length < 2) {
-            throw new ResponseStatusException(UNAUTHORIZED, "Bad atuhorization was provided: missing password!");
+            throw new ResponseStatusException(UNAUTHORIZED, "Bad authorization was provided: missing password!");
         }
         return new UserCredentials(values[0], values[1]);
     }
