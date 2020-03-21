@@ -1,5 +1,6 @@
 package de.pandemieduell.api;
 
+import de.pandemieduell.model.Duel;
 import de.pandemieduell.model.GameState;
 import de.pandemieduell.model.Round;
 import org.springframework.web.bind.annotation.*;
@@ -13,22 +14,17 @@ public class GamesController {
   }
 
   @PostMapping(value = "/games")
-  public String joinGame(@RequestParam("playerId") String playerId) {
+  public String joinGame(@RequestParam("playerId") String playerId, @RequestParam("random") boolean randomMatching) {
     return null; // TODO implement
   }
 
-  @GetMapping(value = "games/{gameId}/currentRound")
-  public Round getCurrentRound(@PathVariable long gameId) {
+  @PostMapping(value = "/games/{gameId}")
+  public String joinGame(@RequestParam("playerId") String playerId, @PathVariable String gameId) {
     return null; // TODO implement
   }
 
-  @GetMapping(value = "games/{gameId}/round/{roundId}")
-  public Round getRound(@PathVariable long gameId, @PathVariable long roundId) {
-    return null; // TODO implement
-  }
-
-  @GetMapping(value = "games/{gameId}/state")
-  public GameState getCurrentGameState(@PathVariable long gameId) {
+  @GetMapping(value = "games/{gameId}")
+  public Duel getGame(@PathVariable long gameId) {
     return null; // TODO implement
   }
 
@@ -40,7 +36,7 @@ public class GamesController {
     // TODO implement
   }
 
-  @PostMapping(value = "game/{gameId}/cancel")
+  @DeleteMapping(value = "game/{gameId}")
   public void cancelGame(@PathVariable String gameId) {
     // TODO implement
   }
