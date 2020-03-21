@@ -12,7 +12,8 @@ public class GamesController {
   }
 
   @PostMapping(value = "/games")
-  public String joinGame(@RequestParam("playerId") String playerId, @RequestParam("random") boolean randomMatching) {
+  public String joinGame(
+      @RequestParam("playerId") String playerId, @RequestParam("random") boolean randomMatching) {
     return null; // TODO implement
   }
 
