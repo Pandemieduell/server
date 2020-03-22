@@ -5,6 +5,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 import de.pandemieduell.api.exceptions.NotFoundException;
+import de.pandemieduell.api.exceptions.UnauthorizedException;
 import de.pandemieduell.api.exceptions.UnprocessableEntryException;
 import de.pandemieduell.model.Duel;
 import de.pandemieduell.model.GameState;
@@ -22,9 +23,17 @@ public class GamesController {
 
   @Autowired MongoTemplate mongoTemplate;
 
-  private Player findPlayer(String id) {
-    Player player = mongoTemplate.findOne(query(where("id").is(id)), Player.class, "users");
-    if (player == null) throw new NotFoundException("Player not found!");
+  private Player findAndAuthorizePlayer(UserCredentials credentials) {
+    Player player =
+        mongoTemplate.findOne(query(where("id").is(credentials.getId())), Player.class, "users");
+    if (player == null) throw new UnauthorizedException("Unknown Credentials!");
+    String token =
+        mongoTemplate
+            .findOne(
+                query(where("id").is(credentials.getId())), UserCredentials.class, "credentials")
+            .getToken();
+    if (!token.equals(credentials.getToken()))
+      throw new UnauthorizedException("Unknown Credentials!");
     return player;
   }
 
@@ -32,6 +41,7 @@ public class GamesController {
   public String registerUser(@RequestBody CreateUserTransferObject createUserObject) {
     Player p = new Player(createUserObject.name);
     mongoTemplate.save(p, "users");
+    mongoTemplate.save(new UserCredentials(p.getId(), createUserObject.token), "credentials");
     return p.getId();
   }
 
@@ -39,8 +49,7 @@ public class GamesController {
   public String joinGame(
       @RequestHeader("Authorization") String authorization,
       @RequestParam("random") boolean randomMatching) {
-    var userCredentials = getUserCredentials(authorization);
-    Player player = findPlayer(userCredentials.getId());
+    Player player = findAndAuthorizePlayer(getUserCredentials(authorization));
 
     if (randomMatching) {
       List<Duel> opens_duels =
@@ -79,8 +88,7 @@ public class GamesController {
   @PostMapping(value = "/games/{gameId}")
   public String joinGame(
       @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
-    var userCredentials = getUserCredentials(authorization);
-    Player player = findPlayer(userCredentials.getId());
+    Player player = findAndAuthorizePlayer(getUserCredentials(authorization));
 
     Duel private_duel =
         mongoTemplate.findOne(
@@ -130,7 +138,7 @@ public class GamesController {
   public void cancelGame(
       @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
     var userCredentials = getUserCredentials(authorization);
-    Player player = findPlayer(userCredentials.getId());
+    Player player = findAndAuthorizePlayer(getUserCredentials(authorization));;
 
     Duel duel = mongoTemplate.findOne(query(where("id").is(gameId)), Duel.class, "running-duels");
     if (duel == null) throw new NotFoundException("Game not found!");
