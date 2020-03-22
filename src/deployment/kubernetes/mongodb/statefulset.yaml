@@ -35,6 +35,7 @@ spec:
           env:
             - name: MONGO_SIDECAR_POD_LABELS
               value: component=mongo
+
   volumeClaimTemplates:
     - metadata:
         name: mongo-data

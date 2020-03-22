@@ -1,7 +1,17 @@
 spring:
-  profiles: production
   main:
     banner-mode: off
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /
+
+
+---
+spring:
+  profiles: LIVE
   data:
     mongodb:
       authentication-database: admin
@@ -10,9 +20,4 @@ spring:
       database: pandemieduell
       port: 27017
       host: 34.102.248.102
-management:
-  server:
-    port: 8081
-  endpoints:
-    web:
-      base-path: /
+      uri:

@@ -57,7 +57,10 @@ dockerRun {
 }
 
 gradleFileEncrypt {
-    files = arrayOf(deploymentKubeConfig)
+    files = arrayOf(
+        deploymentKubeConfig,
+        "$deploymentSrc/server/mongo.secret"
+    )
 }
 
 task("lint") {
