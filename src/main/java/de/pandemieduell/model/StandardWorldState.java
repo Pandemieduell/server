@@ -1,13 +1,6 @@
 package de.pandemieduell.model;
 
-import org.springframework.boot.actuate.endpoint.web.Link;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-public class StandardWorldState implements MutableWorldState {
+public class StandardWorldState implements MutableWorldState, Cloneable {
   // Zustandseigenschaften
   private long healthyPopulation;
   private long infectedPopulation;
@@ -22,8 +15,6 @@ public class StandardWorldState implements MutableWorldState {
   private double caseFatalityRate;
   private double infectionRate;
 
-  private Map<Integer, List<Card>> playedCardsPerRound;
-
   public StandardWorldState() {
     this.healthyPopulation = 7000000000L;
     this.infectedPopulation = 1L;
@@ -34,7 +25,6 @@ public class StandardWorldState implements MutableWorldState {
     this.stateAssets = 123456789L;
     this.caseFatalityRate = 0.2;
     this.infectionRate = 1.2;
-    this.playedCardsPerRound = new HashMap<>();
   }
 
   @Override
@@ -131,20 +121,12 @@ public class StandardWorldState implements MutableWorldState {
   }
 
   @Override
-  public void addPlayedCard(final Integer round, final Card card) {
-    List<Card> playedCards = this.playedCardsPerRound.getOrDefault(round, new LinkedList<>());
-
-    playedCards.add(card);
-    this.playedCardsPerRound.put(round, playedCards);
-  }
-
-  @Override
-  public Map<Integer, List<Card>> getPlayedCards() {
-    return this.playedCardsPerRound;
-  }
-
-  @Override
   public void setInfectionRate(double infectionRate) {
     this.infectionRate = infectionRate;
+  }
+
+  @Override
+  protected Object clone() throws CloneNotSupportedException {
+    return super.clone();
   }
 }

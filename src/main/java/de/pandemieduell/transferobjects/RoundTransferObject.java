@@ -36,7 +36,7 @@ public class RoundTransferObject {
     this.worldState = round.getWorldState();
 
     this.playedCards = new LinkedList<>();
-    for (Card card : round.getWorldState().getPlayedCards().get(round.getRoundNumber())) {
+    for (Card card : round.getPlayedCards()) {
       playedCards.add(new CardTransferObject(card));
     }
   }

@@ -18,6 +18,4 @@ public interface MutableWorldState extends WorldState {
   void setCaseFatalityRate(double caseFatalityRate);
 
   void setInfectionRate(double infectionRate);
-
-  void addPlayedCard(Integer round, Card card);
 }

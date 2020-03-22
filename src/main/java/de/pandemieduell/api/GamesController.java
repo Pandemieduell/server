@@ -157,8 +157,12 @@ public class GamesController {
   public void playCard(
       @RequestHeader("Authorization") String authorization,
       @PathVariable String gameId,
-      @RequestParam("cardNumber") int cardNumber) {
-    // TODO implement
+      @RequestParam("cardNumber") int cardNumber)
+      throws CloneNotSupportedException {
+    Player player = findAndAuthorizePlayer(authorization);
+    Duel duel = findRunningGame(gameId, player);
+
+    duel.process_turn(cardNumber, player.getId());
   }
 
   @DeleteMapping(value = "game/{gameId}")
@@ -167,7 +171,7 @@ public class GamesController {
     Player player = findAndAuthorizePlayer(authorization);
     Duel duel = findRunningGame(gameId, player);
 
-    // TODO Set Game state to cancelled!
+    duel.cancel();
 
     mongoTemplate.findAndRemove(query(where("id").is(gameId)), Duel.class, "running-duels");
     mongoTemplate.save(duel, "finished-duels");
