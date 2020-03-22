@@ -7,17 +7,18 @@ management:
   endpoints:
     web:
       base-path: /
-
-
 ---
 spring:
-  profiles: LIVE
+  profiles: production
+  main:
+    banner-mode: off
   data:
     mongodb:
       authentication-database: admin
-      username: server
-      password: a
-      database: pandemieduell
-      port: 27017
-      host: 34.102.248.102
-      uri:
+      uri: "mongodb://pandemieduell@mongo-0.mongo,mongo-1.mongo,mongo-2.mongo:27017?authSource=admin"
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /
