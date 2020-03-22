@@ -9,13 +9,11 @@ public class Round {
   private List<PandemicCard> pandemicCards;
   private WorldState worldState;
   private List<GameAction> executedActions;
-  private List<Card> playedCards;
 
   public Round(int roundNumber, WorldState worldState) {
     this.roundNumber = roundNumber;
     this.worldState = worldState;
     this.executedActions = new LinkedList<>();
-    this.playedCards = new LinkedList<>();
   }
 
   public int getRoundNumber() {
@@ -36,9 +34,5 @@ public class Round {
 
   public List<GameAction> getExecutedActions() {
     return executedActions;
-  }
-
-  public List<Card> getPlayedCards() {
-    return playedCards;
   }
 }

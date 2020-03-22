@@ -1,5 +1,8 @@
 package de.pandemieduell.model;
 
+import java.util.List;
+import java.util.Map;
+
 public interface WorldState {
   long getHealthyPopulation();
 
@@ -18,4 +21,6 @@ public interface WorldState {
   double getCaseFatalityRate();
 
   double getInfectionRate();
+
+  Map<Integer, List<Card>> getPlayedCards();
 }
