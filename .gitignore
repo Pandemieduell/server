@@ -130,3 +130,7 @@ secrets.yml
 !*.secret.encrypted
 *.filled.*
 
+
+src/test/java/de/pandemieduell/server/user.http
+
+src/deployment/kubernetes/server/mongo.secret

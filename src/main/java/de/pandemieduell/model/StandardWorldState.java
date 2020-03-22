@@ -1,6 +1,6 @@
 package de.pandemieduell.model;
 
-public class StandardWorldState implements MutableWorldState {
+public class StandardWorldState implements MutableWorldState, Cloneable {
   // Zustandseigenschaften
   private long healthyPopulation;
   private long infectedPopulation;
@@ -123,5 +123,10 @@ public class StandardWorldState implements MutableWorldState {
   @Override
   public void setInfectionRate(double infectionRate) {
     this.infectionRate = infectionRate;
+  }
+
+  @Override
+  protected Object clone() throws CloneNotSupportedException {
+    return super.clone();
   }
 }

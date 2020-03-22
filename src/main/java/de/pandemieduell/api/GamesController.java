@@ -39,7 +39,7 @@ public class GamesController {
   }
 
   private Duel findRunningGame(String gameId, Player player) {
-    Duel duel = mongoTemplate.findOne(query(where("id").is(gameId)), Duel.class, "running-duels");
+    Duel duel = mongoTemplate.findOne(query(where("id").is(gameId)), Duel.class, "runningDuels");
     if (duel == null) throw new NotFoundException("Game not found!");
 
     // check that the player is part of the duel
@@ -69,7 +69,7 @@ public class GamesController {
           mongoTemplate.find(
               query(where("game_state").is(GameState.INCOMPLETE)),
               Duel.class,
-              "duel-matchmaking-public");
+              "duelMatchmakingPublic");
 
       for (Duel selected : opens_duels) {
         if (selected.getGovernmentPlayer().getId().equals(player.getId())) {
@@ -78,21 +78,21 @@ public class GamesController {
           selected.addPandemicPlayer(player);
 
           mongoTemplate.findAndRemove(
-              query(where("id").is(selected.getId())), Duel.class, "duel-matchmaking-public");
-          mongoTemplate.save(selected, "running-duels");
+              query(where("id").is(selected.getId())), Duel.class, "duelMatchmakingPublic");
+          mongoTemplate.save(selected, "runningDuels");
 
           return new MatchmakingTransferObject(selected.getId());
         }
       }
 
       Duel new_duel = new Duel(player);
-      mongoTemplate.save(new_duel, "duel-matchmaking-public");
+      mongoTemplate.save(new_duel, "duelMatchmakingPublic");
 
       return new MatchmakingTransferObject(new_duel.getId());
     } else {
       Duel new_duel = new Duel(player);
 
-      mongoTemplate.save(new_duel, "duel-matchmaking-private");
+      mongoTemplate.save(new_duel, "duelMatchmakingPrivate");
 
       return new MatchmakingTransferObject(new_duel.getId());
     }
@@ -104,8 +104,7 @@ public class GamesController {
     Player player = findAndAuthorizePlayer(authorization);
 
     Duel private_duel =
-        mongoTemplate.findOne(
-            query(where("id").is(gameId)), Duel.class, "duel-matchmaking-private");
+        mongoTemplate.findOne(query(where("id").is(gameId)), Duel.class, "duelMatchmakingPrivate");
     if (private_duel == null) throw new NotFoundException("Duel not found!");
 
     if (private_duel.getGovernmentPlayer().getId().equals(player.getId()))
@@ -113,8 +112,8 @@ public class GamesController {
 
     private_duel.addPandemicPlayer(player);
     mongoTemplate.findAndRemove(
-        query(where("id").is(gameId)), Duel.class, "duel-matchmaking-private");
-    mongoTemplate.save(private_duel, "running-duels");
+        query(where("id").is(gameId)), Duel.class, "duelMatchmakingPrivate");
+    mongoTemplate.save(private_duel, "runningDuels");
 
     return new MatchmakingTransferObject(private_duel.getId());
   }
@@ -157,8 +156,12 @@ public class GamesController {
   public void playCard(
       @RequestHeader("Authorization") String authorization,
       @PathVariable String gameId,
-      @RequestParam("cardNumber") int cardNumber) {
-    // TODO implement
+      @RequestParam("cardNumber") int cardNumber)
+      throws CloneNotSupportedException {
+    Player player = findAndAuthorizePlayer(authorization);
+    Duel duel = findRunningGame(gameId, player);
+
+    duel.process_turn(cardNumber, player.getId());
   }
 
   @DeleteMapping(value = "game/{gameId}")
@@ -167,9 +170,9 @@ public class GamesController {
     Player player = findAndAuthorizePlayer(authorization);
     Duel duel = findRunningGame(gameId, player);
 
-    // TODO Set Game state to cancelled!
+    duel.cancel();
 
-    mongoTemplate.findAndRemove(query(where("id").is(gameId)), Duel.class, "running-duels");
-    mongoTemplate.save(duel, "finished-duels");
+    mongoTemplate.findAndRemove(query(where("id").is(gameId)), Duel.class, "runningDuels");
+    mongoTemplate.save(duel, "finishedDuels");
   }
 }
