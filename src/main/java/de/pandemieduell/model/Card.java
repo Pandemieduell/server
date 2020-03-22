@@ -9,5 +9,7 @@ public interface Card {
 
   List<GameAction> getGameActions();
 
-  int getNumberOfTickets(int round, WorldState state);
+  int getNumberOfTickets(int round, WorldState state, List<Card> playedCards);
+
+  void play(int round);
 }
