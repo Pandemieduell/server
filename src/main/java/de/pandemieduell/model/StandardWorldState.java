@@ -28,33 +28,29 @@ public class StandardWorldState implements MutableWorldState {
   }
 
   @Override
-  public void infectPeople(long amount) throws IllegalArgumentException{
-    if (this.healthyPopulation - amount < 0)
-      throw new IllegalArgumentException();
+  public void infectPeople(long amount) throws IllegalArgumentException {
+    if (this.healthyPopulation - amount < 0) throw new IllegalArgumentException();
     this.healthyPopulation -= amount;
     this.infectedPopulation += amount;
   }
 
   @Override
-  public void healInfectedPeople(long amount) throws IllegalArgumentException{
-    if (this.infectedPopulation - amount < 0)
-      throw new IllegalArgumentException();
+  public void healInfectedPeople(long amount) throws IllegalArgumentException {
+    if (this.infectedPopulation - amount < 0) throw new IllegalArgumentException();
     this.infectedPopulation -= amount;
     this.immunePopulation += amount;
   }
 
   @Override
-  public void vaccinateHealthyPeople(long amount) throws IllegalArgumentException{
-    if (this.healthyPopulation - amount < 0)
-      throw new IllegalArgumentException();
+  public void vaccinateHealthyPeople(long amount) throws IllegalArgumentException {
+    if (this.healthyPopulation - amount < 0) throw new IllegalArgumentException();
     this.healthyPopulation -= amount;
     this.immunePopulation += amount;
   }
 
   @Override
-  public void killPeople(long amount) throws IllegalArgumentException{
-    if (this.infectedPopulation - amount < 0)
-      throw new IllegalArgumentException();
+  public void killPeople(long amount) throws IllegalArgumentException {
+    if (this.infectedPopulation - amount < 0) throw new IllegalArgumentException();
     this.infectedPopulation -= amount;
     this.deadPopulation += amount;
   }

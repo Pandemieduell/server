@@ -1,21 +1,21 @@
 package de.pandemieduell.model;
 
 public interface WorldState {
-    long getHealthyPopulation();
+  long getHealthyPopulation();
 
-    long getInfectedPopulation();
+  long getInfectedPopulation();
 
-    long getImmunePopulation();
+  long getImmunePopulation();
 
-    long getDeadPopulation();
+  long getDeadPopulation();
 
-    long getHealthSystemCapacity();
+  long getHealthSystemCapacity();
 
-    int getPopulationMorale();
+  int getPopulationMorale();
 
-    long getStateAssets();
+  long getStateAssets();
 
-    double getCaseFatalityRate();
+  double getCaseFatalityRate();
 
-    double getInfectionRate();
+  double getInfectionRate();
 }
