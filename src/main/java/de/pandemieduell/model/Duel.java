@@ -1,6 +1,7 @@
 package de.pandemieduell.model;
 
 import de.pandemieduell.api.exceptions.UnprocessableEntryException;
+import de.pandemieduell.api.exceptions.UnprocessableEntryException;
 import java.security.SecureRandom;
 import java.time.temporal.ValueRange;
 import java.util.*;
@@ -74,8 +75,8 @@ public class Duel {
   }
 
   private void initializeDuel() {
-    WorldState worldState = new StandardWorldState();
-    Round round = new Round(0, /*TODO*/ null);
+    StandardWorldState worldState = new StandardWorldState();
+    Round round = new Round(0, worldState);
     // Draw 4 cards for each player
     for (int i = 0; i < 4; i++) {
       round.getPandemicCards().add(drawCard(cardDeck.getPandemicCards(), worldState, 0));
@@ -97,7 +98,7 @@ public class Duel {
     // find applicable actions
     List<GameAction> actionsToExecute =
         this.rounds
-            .stream()
+            .parallelStream()
             .map(Round::getPlayedCards)
             .flatMap(List::stream)
             .map(Card::getGameActions)
@@ -110,6 +111,7 @@ public class Duel {
     for (GameAction action : actionsToExecute) {
       action.updateWorldState(action_state);
     }
+    lastRound.getExecutedActions().addAll(actionsToExecute);
 
     // create new round
     Round nextRound = new Round(this.getRoundNumber() + 1, (StandardWorldState) action_state);
@@ -131,7 +133,25 @@ public class Duel {
           .getGovernmentCards()
           .add(drawCard(cardDeck.getGovernmentCards(), nextRound.getWorldState(), 0));
     }
-    this.gameState = GameState.PANDEMICS_TURN;
+    this.rounds.add(nextRound);
+
+    if (!isGameWon()) {
+      this.gameState = GameState.PANDEMICS_TURN;
+    }
+  }
+
+  public boolean isGameWon() {
+    Round lastRound = this.rounds.get(this.getRoundNumber());
+    if(lastRound.getWorldState().getPopulationMorale() <= 10) {
+      this.gameState = GameState.PANDEMIC_WON;
+      return true;
+    }
+    if (lastRound.getWorldState().getInfectedPopulation() == 0) {
+      this.gameState = GameState.GOVERNMENT_WON;
+      return true;
+    }
+    // TODO: Add other winning conditions.
+    return false;
   }
 
   public void cancel() {
