@@ -3,12 +3,10 @@ kind: Ingress
 metadata:
   name: pandemieduell-server-ipv4
   annotations:
-    kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.global-static-ip-name: pandemieduell-ipv4
+    networking.gke.io/managed-certificates: pandemieduell-api
+    kubernetes.io/ingress.allow-http: "false"
 spec:
-  tls:
-    - hosts: [api.pandemieduell.de]
-      secretName: pandemieduell-tls-ipv4
   rules:
     - host: api.pandemieduell.de
       http:
@@ -24,10 +22,9 @@ metadata:
   name: pandemieduell-server-ipv6
   annotations:
     kubernetes.io/ingress.global-static-ip-name: pandemieduell-ipv6
+    networking.gke.io/managed-certificates: pandemieduell-api
+    kubernetes.io/ingress.allow-http: "false"
 spec:
-  tls:
-    - hosts: [api.pandemieduell.de]
-      secretName: pandemieduell-tls-ipv6
   rules:
     - host: api.pandemieduell.de
       http:

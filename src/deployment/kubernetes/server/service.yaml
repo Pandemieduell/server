@@ -3,8 +3,8 @@ kind: Service
 metadata:
   name: pandemieduell-server
 spec:
-  selector:
-    component: server
+  selector: {}
+  type: NodePort
   ports:
     - protocol: TCP
       port: 80

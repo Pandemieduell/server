@@ -84,17 +84,23 @@ val writeDeploymentParameters by tasks.creating {
     val templateFiles = fileTree(deploymentSrc) {
         include("**/*.tpl.*")
     }.files
+    val parameters = mapOf(
+        "DOCKER_IMAGE" to dockerImage
+    )
 
     fun File.outputFile() = file(path.replace(".tpl", ".filled"))
 
     inputs.files(templateFiles)
+    inputs.properties(parameters)
     outputs.files(templateFiles.map { it.outputFile() })
 
     doLast {
         templateFiles.forEach { templateFile ->
-            templateFile.outputFile().writeText(
-                templateFile.readText().replace("\$DOCKER_IMAGE", dockerImage)
-            )
+            var filledText = templateFile.readText()
+            for ((key, value) in parameters) {
+                filledText = filledText.replace("$$key", value)
+            }
+            templateFile.outputFile().writeText(filledText)
         }
     }
 }
