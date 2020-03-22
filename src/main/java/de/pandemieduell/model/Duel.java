@@ -1,9 +1,11 @@
 package de.pandemieduell.model;
 
 import de.pandemieduell.api.exceptions.UnprocessableEntryException;
-import de.pandemieduell.cards.event.NothingCard;
-import de.pandemieduell.cards.government.InvestIntoResearchCard;
-import de.pandemieduell.cards.pandemic.SpreadViaAnimalsCard;
+import de.pandemieduell.cards.ExecutableCard;
+import de.pandemieduell.cards.event.NothingExecutableCard;
+import de.pandemieduell.cards.government.InvestIntoResearchExecutableCard;
+import de.pandemieduell.cards.pandemic.SpreadViaAnimalsExecutableCard;
+import java.lang.reflect.InvocationTargetException;
 import java.security.SecureRandom;
 import java.time.temporal.ValueRange;
 import java.util.*;
@@ -46,46 +48,77 @@ public class Duel {
 
     this.cardDeck = new CardDeck();
     // TODO: Insert all cards to the deck.
-    this.cardDeck.insertEventCard(new NothingCard());
-    this.cardDeck.insertEventCard(new NothingCard());
-    this.cardDeck.insertEventCard(new NothingCard());
-    this.cardDeck.insertEventCard(new NothingCard());
-    this.cardDeck.insertEventCard(new NothingCard());
-    this.cardDeck.insertEventCard(new NothingCard());
-    this.cardDeck.insertEventCard(new NothingCard());
-    this.cardDeck.insertEventCard(new NothingCard());
-    this.cardDeck.insertEventCard(new NothingCard());
-    this.cardDeck.insertEventCard(new NothingCard());
-    this.cardDeck.insertEventCard(new NothingCard());
+    this.cardDeck.insertEventCard(new Card(NothingExecutableCard.class.getCanonicalName(), 0));
+    this.cardDeck.insertEventCard(new Card(NothingExecutableCard.class.getCanonicalName(), 1));
+    this.cardDeck.insertEventCard(new Card(NothingExecutableCard.class.getCanonicalName(), 2));
+    this.cardDeck.insertEventCard(new Card(NothingExecutableCard.class.getCanonicalName(), 3));
+    this.cardDeck.insertEventCard(new Card(NothingExecutableCard.class.getCanonicalName(), 4));
+    this.cardDeck.insertEventCard(new Card(NothingExecutableCard.class.getCanonicalName(), 5));
+    this.cardDeck.insertEventCard(new Card(NothingExecutableCard.class.getCanonicalName(), 6));
+    this.cardDeck.insertEventCard(new Card(NothingExecutableCard.class.getCanonicalName(), 7));
+    this.cardDeck.insertEventCard(new Card(NothingExecutableCard.class.getCanonicalName(), 8));
+    this.cardDeck.insertEventCard(new Card(NothingExecutableCard.class.getCanonicalName(), 9));
+    this.cardDeck.insertEventCard(new Card(NothingExecutableCard.class.getCanonicalName(), 10));
 
-    this.cardDeck.insertGovernmentCard(new InvestIntoResearchCard());
-    this.cardDeck.insertGovernmentCard(new InvestIntoResearchCard());
-    this.cardDeck.insertGovernmentCard(new InvestIntoResearchCard());
-    this.cardDeck.insertGovernmentCard(new InvestIntoResearchCard());
-    this.cardDeck.insertGovernmentCard(new InvestIntoResearchCard());
-    this.cardDeck.insertGovernmentCard(new InvestIntoResearchCard());
-    this.cardDeck.insertGovernmentCard(new InvestIntoResearchCard());
-    this.cardDeck.insertGovernmentCard(new InvestIntoResearchCard());
-    this.cardDeck.insertGovernmentCard(new InvestIntoResearchCard());
-    this.cardDeck.insertGovernmentCard(new InvestIntoResearchCard());
-    this.cardDeck.insertGovernmentCard(new InvestIntoResearchCard());
+    this.cardDeck.insertGovernmentCard(
+        new Card(InvestIntoResearchExecutableCard.class.getCanonicalName(), 11));
+    this.cardDeck.insertGovernmentCard(
+        new Card(InvestIntoResearchExecutableCard.class.getCanonicalName(), 12));
+    this.cardDeck.insertGovernmentCard(
+        new Card(InvestIntoResearchExecutableCard.class.getCanonicalName(), 13));
+    this.cardDeck.insertGovernmentCard(
+        new Card(InvestIntoResearchExecutableCard.class.getCanonicalName(), 14));
+    this.cardDeck.insertGovernmentCard(
+        new Card(InvestIntoResearchExecutableCard.class.getCanonicalName(), 15));
+    this.cardDeck.insertGovernmentCard(
+        new Card(InvestIntoResearchExecutableCard.class.getCanonicalName(), 16));
+    this.cardDeck.insertGovernmentCard(
+        new Card(InvestIntoResearchExecutableCard.class.getCanonicalName(), 17));
+    this.cardDeck.insertGovernmentCard(
+        new Card(InvestIntoResearchExecutableCard.class.getCanonicalName(), 18));
+    this.cardDeck.insertGovernmentCard(
+        new Card(InvestIntoResearchExecutableCard.class.getCanonicalName(), 19));
+    this.cardDeck.insertGovernmentCard(
+        new Card(InvestIntoResearchExecutableCard.class.getCanonicalName(), 20));
+    this.cardDeck.insertGovernmentCard(
+        new Card(InvestIntoResearchExecutableCard.class.getCanonicalName(), 21));
 
-    this.cardDeck.insertPandemicCard(new SpreadViaAnimalsCard());
-    this.cardDeck.insertPandemicCard(new SpreadViaAnimalsCard());
-    this.cardDeck.insertPandemicCard(new SpreadViaAnimalsCard());
-    this.cardDeck.insertPandemicCard(new SpreadViaAnimalsCard());
-    this.cardDeck.insertPandemicCard(new SpreadViaAnimalsCard());
-    this.cardDeck.insertPandemicCard(new SpreadViaAnimalsCard());
-    this.cardDeck.insertPandemicCard(new SpreadViaAnimalsCard());
-    this.cardDeck.insertPandemicCard(new SpreadViaAnimalsCard());
-    this.cardDeck.insertPandemicCard(new SpreadViaAnimalsCard());
-    this.cardDeck.insertPandemicCard(new SpreadViaAnimalsCard());
+    this.cardDeck.insertPandemicCard(
+        new Card(SpreadViaAnimalsExecutableCard.class.getCanonicalName(), 22));
+    this.cardDeck.insertPandemicCard(
+        new Card(SpreadViaAnimalsExecutableCard.class.getCanonicalName(), 23));
+    this.cardDeck.insertPandemicCard(
+        new Card(SpreadViaAnimalsExecutableCard.class.getCanonicalName(), 24));
+    this.cardDeck.insertPandemicCard(
+        new Card(SpreadViaAnimalsExecutableCard.class.getCanonicalName(), 25));
+    this.cardDeck.insertPandemicCard(
+        new Card(SpreadViaAnimalsExecutableCard.class.getCanonicalName(), 26));
+    this.cardDeck.insertPandemicCard(
+        new Card(SpreadViaAnimalsExecutableCard.class.getCanonicalName(), 27));
+    this.cardDeck.insertPandemicCard(
+        new Card(SpreadViaAnimalsExecutableCard.class.getCanonicalName(), 28));
+    this.cardDeck.insertPandemicCard(
+        new Card(SpreadViaAnimalsExecutableCard.class.getCanonicalName(), 29));
+    this.cardDeck.insertPandemicCard(
+        new Card(SpreadViaAnimalsExecutableCard.class.getCanonicalName(), 30));
+    this.cardDeck.insertPandemicCard(
+        new Card(SpreadViaAnimalsExecutableCard.class.getCanonicalName(), 31));
+    this.cardDeck.insertPandemicCard(
+        new Card(SpreadViaAnimalsExecutableCard.class.getCanonicalName(), 32));
   }
 
-  private static <T extends Card> T drawCard(
-      List<T> cards, WorldState state, List<Card> playedCards, Integer roundNumber) {
+  private static Card drawCard(
+      List<Card> cards, WorldState state, List<Card> playedCards, Integer roundNumber)
+      throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
+          InstantiationException, ClassNotFoundException {
+
+    List<ExecutableCard> executableCards = new LinkedList<>();
+    for (Card card : cards) {
+      executableCards.add(card.getCardClass().getDeclaredConstructor().newInstance());
+    }
+
     List<Integer> ticketNumbers =
-        cards
+        executableCards
             .stream()
             .map(a -> a.getNumberOfTickets(roundNumber, state, playedCards))
             .collect(Collectors.toList());
@@ -99,6 +132,8 @@ public class Duel {
       currentBase = currentUpper;
     }
 
+    if (totalTicketNumber <= 0) throw new UnprocessableEntryException("Card deck is empty!");
+
     int drawnTicket = random.nextInt(totalTicketNumber);
     int pickedCard =
         ranges
@@ -111,49 +146,68 @@ public class Duel {
     return cards.remove(pickedCard);
   }
 
-  private void initializeDuel() {
+  private void initializeDuel()
+      throws InvocationTargetException, NoSuchMethodException, InstantiationException,
+          IllegalAccessException, ClassNotFoundException {
     StandardWorldState worldState = new StandardWorldState();
     Round round = new Round(0, worldState);
     // Draw 4 cards for each player
     for (int i = 0; i < 4; i++) {
+
       round
           .getPandemicCards()
-          .add(drawCard(cardDeck.getPandemicCards(), worldState, this.getAllPlayedCards(), 0));
+          .add(drawCard(this.cardDeck.getPandemicCards(), worldState, this.getAllPlayedCards(), 0));
+
       round
           .getGovernmentCards()
-          .add(drawCard(cardDeck.getGovernmentCards(), worldState, this.getAllPlayedCards(), 0));
+          .add(
+              drawCard(
+                  this.cardDeck.getGovernmentCards(), worldState, this.getAllPlayedCards(), 0));
     }
+    this.rounds.add(round);
   }
 
   private List<Card> getAllPlayedCards() {
     return this.rounds
-        .parallelStream()
+        .stream()
         .map(Round::getPlayedCards)
         .flatMap(List::stream)
         .collect(Collectors.toList());
   }
 
   // to be called when both players made their turn and the game can advance to the next round
-  private void finishRound() throws CloneNotSupportedException {
+  private void finishRound()
+      throws CloneNotSupportedException, InvocationTargetException, NoSuchMethodException,
+          InstantiationException, IllegalAccessException, ClassNotFoundException {
     Round lastRound = this.rounds.get(this.getRoundNumber());
     // draw event card and add to played cards
-    lastRound
-        .getPlayedCards()
-        .add(
-            this.getRoundNumber(),
-            drawCard(
-                cardDeck.getEventCards(),
-                lastRound.getWorldState(),
-                this.getAllPlayedCards(),
-                lastRound.getRoundNumber()));
 
+    Card event_card =
+        drawCard(
+            this.cardDeck.getEventCards(),
+            lastRound.getWorldState(),
+            this.getAllPlayedCards(),
+            lastRound.getRoundNumber());
+    event_card.play(this.getRoundNumber());
+    lastRound.getPlayedCards().add(event_card);
+
+    // TOFO: Simulate
     // find applicable actions
-    List<GameAction> actionsToExecute =
+    List<Card> cards =
         this.rounds
             .parallelStream()
             .map(Round::getPlayedCards)
             .flatMap(List::stream)
-            .map(Card::getGameActions)
+            .collect(Collectors.toList());
+    List<ExecutableCard> executableCards = new LinkedList<>();
+    for (Card card : cards) {
+      executableCards.add(card.getCardClass().getDeclaredConstructor().newInstance());
+    }
+
+    List<GameAction> actionsToExecute =
+        executableCards
+            .stream()
+            .map(ExecutableCard::getGameActions)
             .flatMap(List::stream)
             .filter(x -> x.isApplicable(this.getRoundNumber(), lastRound.getWorldState()))
             .collect(Collectors.toList());
@@ -163,7 +217,6 @@ public class Duel {
     for (GameAction action : actionsToExecute) {
       action.updateWorldState(action_state);
     }
-    lastRound.getExecutedActions().addAll(actionsToExecute);
 
     action_state.infectPeople(
         Math.round(action_state.getInfectedPopulation() * action_state.getInfectionRate()));
@@ -225,7 +278,9 @@ public class Duel {
     this.gameState = GameState.CANCELED;
   }
 
-  public void process_turn(int played_card, String player_id) throws CloneNotSupportedException {
+  public void process_turn(int played_card, String player_id)
+      throws CloneNotSupportedException, NoSuchMethodException, InstantiationException,
+          IllegalAccessException, InvocationTargetException, ClassNotFoundException {
     Round currentRound = this.rounds.get(this.getRoundNumber());
 
     switch (this.getGameState()) {
@@ -249,12 +304,15 @@ public class Duel {
 
         currentRound.getPlayedCards().add(played_pan_card);
         this.gameState = GameState.GOVERNMENTS_TURN;
+        break;
       default:
         throw new ServerErrorException("No turn possible!");
     }
   }
 
-  public void addPandemicPlayer(Player pandemicPlayer) {
+  public void addPandemicPlayer(Player pandemicPlayer)
+      throws NoSuchMethodException, InstantiationException, IllegalAccessException,
+          InvocationTargetException, ClassNotFoundException {
     this.pandemicPlayer = pandemicPlayer;
     this.initializeDuel();
     this.gameState = GameState.PANDEMICS_TURN;

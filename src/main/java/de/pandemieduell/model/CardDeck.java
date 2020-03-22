@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CardDeck {
-  private List<GovernmentCard> governmentCards;
-  private List<PandemicCard> pandemicCards;
-  private List<EventCard> eventCards;
+  private List<Card> governmentCards;
+  private List<Card> pandemicCards;
+  private List<Card> eventCards;
 
   public CardDeck() {
     this.governmentCards = new LinkedList<>();
@@ -14,27 +14,27 @@ public class CardDeck {
     this.eventCards = new LinkedList<>();
   }
 
-  public List<GovernmentCard> getGovernmentCards() {
+  public List<Card> getGovernmentCards() {
     return governmentCards;
   }
 
-  public List<PandemicCard> getPandemicCards() {
+  public List<Card> getPandemicCards() {
     return pandemicCards;
   }
 
-  public List<EventCard> getEventCards() {
+  public List<Card> getEventCards() {
     return eventCards;
   }
 
-  public void insertGovernmentCard(GovernmentCard card) {
+  public void insertGovernmentCard(Card card) {
     this.governmentCards.add(card);
   }
 
-  public void insertPandemicCard(PandemicCard card) {
+  public void insertPandemicCard(Card card) {
     this.pandemicCards.add(card);
   }
 
-  public void insertEventCard(EventCard card) {
+  public void insertEventCard(Card card) {
     this.eventCards.add(card);
   }
 }

@@ -1,16 +1,18 @@
 package de.pandemieduell.cards.event;
 
 import de.pandemieduell.model.Card;
-import de.pandemieduell.model.EventCard;
+import de.pandemieduell.model.EventExecutableCard;
 import de.pandemieduell.model.GameAction;
 import de.pandemieduell.model.WorldState;
 import java.util.LinkedList;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
-public class NothingCard implements EventCard {
+@Component("NothingCard")
+public class NothingExecutableCard implements EventExecutableCard {
   private int roundPlayed;
 
-  public NothingCard() {
+  public NothingExecutableCard() {
     this.roundPlayed = 0;
   }
 

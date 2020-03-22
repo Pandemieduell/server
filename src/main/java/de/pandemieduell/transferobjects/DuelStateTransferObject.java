@@ -2,8 +2,10 @@ package de.pandemieduell.transferobjects;
 
 import de.pandemieduell.model.Duel;
 import de.pandemieduell.model.GameState;
+import de.pandemieduell.model.Round;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DuelStateTransferObject {
   String id;
@@ -13,7 +15,9 @@ public class DuelStateTransferObject {
   PlayerTransferObject pandemicPlayer;
   List<RoundTransferObject> rounds;
 
-  public DuelStateTransferObject(Duel duel) {
+  public DuelStateTransferObject(Duel duel)
+      throws InvocationTargetException, NoSuchMethodException, InstantiationException,
+          IllegalAccessException, ClassNotFoundException {
     this.id = duel.getId();
     this.duelState = duel.getGameState();
     this.currentRoundNumber = duel.getRoundNumber();
@@ -23,7 +27,10 @@ public class DuelStateTransferObject {
     this.pandemicPlayer =
         new PlayerTransferObject(
             duel.getPandemicPlayer().getUsername(), duel.getPandemicPlayer().getId(), null);
-    this.rounds =
-        duel.getRounds().stream().map(RoundTransferObject::new).collect(Collectors.toList());
+
+    this.rounds = new LinkedList<>();
+    for (Round round : duel.getRounds()) {
+      this.rounds.add(new RoundTransferObject(round));
+    }
   }
 }

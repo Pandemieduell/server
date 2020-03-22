@@ -1,15 +1,48 @@
 package de.pandemieduell.model;
 
-import java.util.List;
+import de.pandemieduell.cards.ExecutableCard;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-public interface Card {
-  String getName();
+public class Card {
+  @Field("cardClass")
+  private String cardClass;
 
-  String getDescription();
+  @Field("roundPlayed")
+  private int roundPlayed;
 
-  List<GameAction> getGameActions();
+  @Id
+  @Field("id")
+  private int id;
 
-  int getNumberOfTickets(int round, WorldState state, List<Card> playedCards);
+  public Card(final String cardClass, final int id) {
+    this.cardClass = cardClass;
+    this.roundPlayed = -1;
+    this.id = id;
+  }
 
-  void play(int round);
+  @PersistenceConstructor
+  public Card(final String cardClass, final int id, final int roundPlayed) {
+    this.cardClass = cardClass;
+    this.roundPlayed = roundPlayed;
+    this.id = id;
+  }
+
+  public void play(int roundPlayed) {
+    this.roundPlayed = roundPlayed;
+  }
+
+  public Class<? extends ExecutableCard> getCardClass() throws ClassNotFoundException {
+    Class entityClass = Class.forName(this.cardClass);
+    return (Class<ExecutableCard>) entityClass;
+  }
+
+  public int getRoundPlayed() {
+    return roundPlayed;
+  }
+
+  public int getId() {
+    return id;
+  }
 }

@@ -1,43 +1,44 @@
 package de.pandemieduell.transferobjects;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import de.pandemieduell.model.Card;
-import de.pandemieduell.model.GameAction;
 import de.pandemieduell.model.Round;
-import de.pandemieduell.model.WorldState;
-import java.util.LinkedList;
+import de.pandemieduell.model.StandardWorldState;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class RoundTransferObject {
   int roundNumber;
   List<CardTransferObject> availableGovernmentCards;
   List<CardTransferObject> availablePandemicCards;
-  List<GameActionTransferObject> executedGameActions;
-  WorldState worldState;
+  StandardWorldState worldState;
   List<CardTransferObject> playedCards;
 
-  public RoundTransferObject(Round round) {
+  public RoundTransferObject(Round round)
+      throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
+          InstantiationException, ClassNotFoundException {
     this.roundNumber = round.getRoundNumber();
 
-    this.availableGovernmentCards = new LinkedList<>();
+    this.availableGovernmentCards = new ArrayList<>();
     for (Card card : round.getGovernmentCards()) {
-      availableGovernmentCards.add(new CardTransferObject(card));
+      availableGovernmentCards.add(
+          new CardTransferObject(card.getCardClass().getDeclaredConstructor().newInstance()));
     }
 
-    this.availablePandemicCards = new LinkedList<>();
+    this.availablePandemicCards = new ArrayList<>();
     for (Card card : round.getPandemicCards()) {
-      availablePandemicCards.add(new CardTransferObject(card));
-    }
-
-    this.executedGameActions = new LinkedList<>();
-    for (GameAction gameAction : round.getExecutedActions()) {
-      executedGameActions.add(new GameActionTransferObject(gameAction));
+      availablePandemicCards.add(
+          new CardTransferObject(card.getCardClass().getDeclaredConstructor().newInstance()));
     }
 
     this.worldState = round.getWorldState();
 
-    this.playedCards = new LinkedList<>();
+    this.playedCards = new ArrayList<>();
     for (Card card : round.getPlayedCards()) {
-      playedCards.add(new CardTransferObject(card));
+      playedCards.add(
+          new CardTransferObject(card.getCardClass().getDeclaredConstructor().newInstance()));
     }
   }
 }
