@@ -5,7 +5,7 @@ metadata:
 spec:
   selector: {}
   serviceName: mongo
-  replicas: 1
+  replicas: 3
   podManagementPolicy: Parallel
   template:
     spec:

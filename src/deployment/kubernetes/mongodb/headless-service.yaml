@@ -8,5 +8,4 @@ spec:
       port: 27017
       targetPort: mongo
   clusterIP: None
-  selector:
-    component: mongo
+  selector: {}
