@@ -13,7 +13,9 @@ spec:
         - name: server
           image: $DOCKER_IMAGE
           env:
-            - name: SPRING_DATA_MONGODB_PASSWORD
+            - name: SPRING_PROFILES_ACTIVE
+              value: production
+            - name: MONGODB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: server
