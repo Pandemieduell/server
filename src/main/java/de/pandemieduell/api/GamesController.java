@@ -21,7 +21,8 @@ public class GamesController {
 
   @Autowired MongoTemplate mongoTemplate;
 
-  private Player findAndAuthorizePlayer(PlayerCredentials credentials) {
+  private Player findAndAuthorizePlayer(String authorization) {
+    PlayerCredentials credentials = getPlayerCredentials(authorization);
     Player player =
         mongoTemplate.findOne(query(where("id").is(credentials.getId())), Player.class, "players");
     if (player == null) throw new UnauthorizedException("Unknown Credentials!");
@@ -33,6 +34,17 @@ public class GamesController {
     if (!token.equals(credentials.getToken()))
       throw new UnauthorizedException("Unknown Credentials!");
     return player;
+  }
+
+  private Duel findRunningGame(String gameId, Player player) {
+    Duel duel = mongoTemplate.findOne(query(where("id").is(gameId)), Duel.class, "running-duels");
+    if (duel == null) throw new NotFoundException("Game not found!");
+
+    // check that the player is part of the duel
+    if (player.getId().equals(duel.getGovernmentPlayer().getId())
+        || player.getId().equals(duel.getPandemicPlayer().getId()))
+      throw new UnauthorizedException("Player is not part of this game!");
+    return duel;
   }
 
   @PostMapping(value = "/players")
@@ -48,7 +60,7 @@ public class GamesController {
   public MatchmakingTransferObject joinGame(
       @RequestHeader("Authorization") String authorization,
       @RequestParam("random") boolean randomMatching) {
-    Player player = findAndAuthorizePlayer(getPlayerCredentials(authorization));
+    Player player = findAndAuthorizePlayer(authorization);
 
     if (randomMatching) {
       List<Duel> opens_duels =
@@ -87,7 +99,7 @@ public class GamesController {
   @PostMapping(value = "/games/{gameId}")
   public MatchmakingTransferObject joinGame(
       @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
-    Player player = findAndAuthorizePlayer(getPlayerCredentials(authorization));
+    Player player = findAndAuthorizePlayer(authorization);
 
     Duel private_duel =
         mongoTemplate.findOne(
@@ -108,7 +120,10 @@ public class GamesController {
   @GetMapping(value = "games/{gameId}")
   public DuelStateTransferObject getGame(
       @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
-    return null; // TODO implement
+    Player player = findAndAuthorizePlayer(authorization);
+    Duel duel = findRunningGame(gameId, player);
+
+    return new DuelStateTransferObject(duel);
   }
 
   @GetMapping(value = "games/{gameId}/rounds/{roundNumber}")
@@ -136,18 +151,12 @@ public class GamesController {
   @DeleteMapping(value = "game/{gameId}")
   public void cancelGame(
       @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
-    Player player = findAndAuthorizePlayer(getPlayerCredentials(authorization));
+    Player player = findAndAuthorizePlayer(authorization);
+    Duel duel = findRunningGame(gameId, player);
 
-    Duel duel = mongoTemplate.findOne(query(where("id").is(gameId)), Duel.class, "running-duels");
-    if (duel == null) throw new NotFoundException("Game not found!");
+    // TODO Set Game state to cancelled!
 
-    // check that the player is part of the duel
-    if (player.getId().equals(duel.getGovernmentPlayer().getId())
-        || player.getId().equals(duel.getPandemicPlayer().getId()))
-
-      // TODO Set Game state to cancelled!
-
-      mongoTemplate.findAndRemove(query(where("id").is(gameId)), Duel.class, "running-duels");
+    mongoTemplate.findAndRemove(query(where("id").is(gameId)), Duel.class, "running-duels");
     mongoTemplate.save(duel, "finished-duels");
   }
 }
