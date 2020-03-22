@@ -104,8 +104,7 @@ public class GamesController {
     Player player = findAndAuthorizePlayer(authorization);
 
     Duel private_duel =
-        mongoTemplate.findOne(
-            query(where("id").is(gameId)), Duel.class, "duelMatchmakingPrivate");
+        mongoTemplate.findOne(query(where("id").is(gameId)), Duel.class, "duelMatchmakingPrivate");
     if (private_duel == null) throw new NotFoundException("Duel not found!");
 
     if (private_duel.getGovernmentPlayer().getId().equals(player.getId()))
