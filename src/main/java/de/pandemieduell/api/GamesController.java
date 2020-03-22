@@ -11,7 +11,6 @@ import de.pandemieduell.model.Duel;
 import de.pandemieduell.model.GameState;
 import de.pandemieduell.model.Player;
 import de.pandemieduell.transferobjects.*;
-
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,7 +36,8 @@ public class GamesController {
   }
 
   @PostMapping(value = "/players")
-  public PlayerTransferObject registerPlayer(@RequestBody CreatePlayerTransferObject createPlayerObject) {
+  public PlayerTransferObject registerPlayer(
+      @RequestBody CreatePlayerTransferObject createPlayerObject) {
     Player p = new Player(createPlayerObject.name);
     mongoTemplate.save(p, "players");
     mongoTemplate.save(new PlayerCredentials(p.getId(), createPlayerObject.token), "credentials");
@@ -141,12 +141,13 @@ public class GamesController {
     Duel duel = mongoTemplate.findOne(query(where("id").is(gameId)), Duel.class, "running-duels");
     if (duel == null) throw new NotFoundException("Game not found!");
 
-    //check that the player is part of the duel
-    if(player.getId().equals(duel.getGovernmentPlayer().getId()) || player.getId().equals(duel.getPandemicPlayer().getId()))
+    // check that the player is part of the duel
+    if (player.getId().equals(duel.getGovernmentPlayer().getId())
+        || player.getId().equals(duel.getPandemicPlayer().getId()))
 
-    // TODO Set Game state to cancelled!
+      // TODO Set Game state to cancelled!
 
-    mongoTemplate.findAndRemove(query(where("id").is(gameId)), Duel.class, "running-duels");
+      mongoTemplate.findAndRemove(query(where("id").is(gameId)), Duel.class, "running-duels");
     mongoTemplate.save(duel, "finished-duels");
   }
 }
