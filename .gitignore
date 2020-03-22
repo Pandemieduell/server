@@ -127,5 +127,6 @@ secrets.yml
 *.secret.*
 *.secret
 !*.secret.*.encrypted
+!*.secret.encrypted
 *.filled.*
 
