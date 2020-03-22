@@ -29,6 +29,7 @@ val dockerImage = "pandemieduell/server:${project.version}"
 val dockerUser: String? by project
 val dockerPassword: String? by project
 val deploymentSrc = "${project.rootDir}/src/deployment/kubernetes"
+val deploymentKubeConfig = "$deploymentSrc/deployment-account/kubeconfig.secret.yaml"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -56,9 +57,7 @@ dockerRun {
 }
 
 gradleFileEncrypt {
-    files = arrayOf(
-        "$deploymentSrc/deployment-account/kubeconfig.secret.json"
-    )
+    files = arrayOf(deploymentKubeConfig)
 }
 
 task("lint") {
@@ -86,17 +85,23 @@ val writeDeploymentParameters by tasks.creating {
     val templateFiles = fileTree(deploymentSrc) {
         include("**/*.tpl.*")
     }.files
+    val parameters = mapOf(
+        "DOCKER_IMAGE" to dockerImage
+    )
 
     fun File.outputFile() = file(path.replace(".tpl", ".filled"))
 
     inputs.files(templateFiles)
+    inputs.properties(parameters)
     outputs.files(templateFiles.map { it.outputFile() })
 
     doLast {
         templateFiles.forEach { templateFile ->
-            templateFile.outputFile().writeText(
-                templateFile.readText().replace("\$DOCKER_IMAGE", dockerImage)
-            )
+            var filledText = templateFile.readText()
+            for ((key, value) in parameters) {
+                filledText = filledText.replace("$$key", value)
+            }
+            templateFile.outputFile().writeText(filledText)
         }
     }
 }
@@ -129,20 +134,26 @@ fun kubectlDeployTask(
     block()
 }
 
-val deploymentKubeConfig = "$deploymentSrc/deployment-account/kubeconfig.secret.json"
 val deployDeploymentAccount by kubectlDeployTask(
     kustomization = "$deploymentSrc/deployment-account",
     commonTag = "component" to "deployment-account"
+)
+val deployDatabase by kubectlDeployTask(
+    kustomization = "$deploymentSrc/mongodb",
+    commonTag = "component" to "mongo",
+    kubeconfig = deploymentKubeConfig
 )
 val deployServer by kubectlDeployTask(
     kustomization = "$deploymentSrc/server",
     commonTag = "component" to "server",
     kubeconfig = deploymentKubeConfig
-)
+) {
+    mustRunAfter(deployDatabase)
+}
 
 task("deploy") {
     group = "deployment"
-    dependsOn(deployServer)
+    dependsOn(deployDatabase, deployServer)
 }
 
 val Project.versionDetails
