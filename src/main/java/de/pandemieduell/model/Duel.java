@@ -45,11 +45,11 @@ public class Duel {
     // TODO: Insert all cards to the deck.
   }
 
-  private static <T extends Card> T drawCard(List<T> cards, WorldState state, Integer roundNumber) {
+  private static <T extends Card> T drawCard(List<T> cards, WorldState state, List<Card> playedCards, Integer roundNumber) {
     List<Integer> ticketNumbers =
         cards
             .stream()
-            .map(a -> a.getNumberOfTickets(roundNumber, state))
+            .map(a -> a.getNumberOfTickets(roundNumber, state, playedCards))
             .collect(Collectors.toList());
     int totalTicketNumber = ticketNumbers.stream().mapToInt(Integer::intValue).sum();
 
@@ -78,9 +78,16 @@ public class Duel {
     Round round = new Round(0, worldState);
     // Draw 4 cards for each player
     for (int i = 0; i < 4; i++) {
-      round.getPandemicCards().add(drawCard(cardDeck.getPandemicCards(), worldState, 0));
-      round.getGovernmentCards().add(drawCard(cardDeck.getGovernmentCards(), worldState, 0));
+      round.getPandemicCards().add(drawCard(cardDeck.getPandemicCards(), worldState, this.getAllPlayedCards(), 0));
+      round.getGovernmentCards().add(drawCard(cardDeck.getGovernmentCards(), worldState, this.getAllPlayedCards(), 0));
     }
+  }
+
+  private List<Card> getAllPlayedCards(){
+    return this.rounds
+            .parallelStream()
+            .map(Round::getPlayedCards)
+            .flatMap(List::stream).collect(Collectors.toList());
   }
 
   // to be called when both players made their turn and the game can advance to the next round
@@ -92,7 +99,7 @@ public class Duel {
         .add(
             this.getRoundNumber(),
             drawCard(
-                cardDeck.getEventCards(), lastRound.getWorldState(), lastRound.getRoundNumber()));
+                cardDeck.getEventCards(), lastRound.getWorldState(),this.getAllPlayedCards(), lastRound.getRoundNumber()));
 
     // find applicable actions
     List<GameAction> actionsToExecute =
@@ -112,6 +119,9 @@ public class Duel {
     }
     lastRound.getExecutedActions().addAll(actionsToExecute);
 
+    action_state.infectPeople(Math.round(action_state.getInfectedPopulation() * action_state.getInfectionRate()));
+    action_state.killPeople(Math.round(action_state.getDeadPopulation() * action_state.getCaseFatalityRate()));
+
     // create new round
     Round nextRound = new Round(this.getRoundNumber() + 1, (StandardWorldState) action_state);
 
@@ -127,10 +137,10 @@ public class Duel {
     for (int i = 0; i < 3; i++) {
       nextRound
           .getPandemicCards()
-          .add(drawCard(cardDeck.getPandemicCards(), nextRound.getWorldState(), 0));
+          .add(drawCard(cardDeck.getPandemicCards(), nextRound.getWorldState(),this.getAllPlayedCards(), 0));
       nextRound
           .getGovernmentCards()
-          .add(drawCard(cardDeck.getGovernmentCards(), nextRound.getWorldState(), 0));
+          .add(drawCard(cardDeck.getGovernmentCards(), nextRound.getWorldState(),this.getAllPlayedCards(), 0));
     }
     this.rounds.add(nextRound);
 
@@ -164,14 +174,22 @@ public class Duel {
       case GOVERNMENTS_TURN:
         if (!this.getGovernmentPlayer().getId().equals(player_id))
           throw new UnprocessableEntryException("Not this players turn!");
-        currentRound.getPlayedCards().add(currentRound.getGovernmentCards().remove(played_card));
+
+        Card played_gov_card = currentRound.getGovernmentCards().remove(played_card);
+        played_gov_card.play(this.getRoundNumber());
+
+        currentRound.getPlayedCards().add(played_gov_card);
         this.gameState = GameState.FINISHING_TURN;
         finishRound();
         break;
       case PANDEMICS_TURN:
         if (!this.getPandemicPlayer().getId().equals(player_id))
           throw new UnprocessableEntryException("Not this players turn!");
-        currentRound.getPlayedCards().add(currentRound.getPandemicCards().remove(played_card));
+
+        Card played_pan_card = currentRound.getPandemicCards().remove(played_card);
+        played_pan_card.play(this.getRoundNumber());
+
+        currentRound.getPlayedCards().add(played_pan_card);
         this.gameState = GameState.GOVERNMENTS_TURN;
       default:
         throw new ServerErrorException("No turn possible!");
