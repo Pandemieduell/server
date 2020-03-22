@@ -10,6 +10,7 @@ import de.pandemieduell.api.exceptions.UnprocessableEntryException;
 import de.pandemieduell.model.Duel;
 import de.pandemieduell.model.GameState;
 import de.pandemieduell.model.Player;
+import de.pandemieduell.model.Round;
 import de.pandemieduell.transferobjects.*;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,7 +132,15 @@ public class GamesController {
       @RequestHeader("Authorization") String authorization,
       @PathVariable String gameId,
       @PathVariable int roundNumber) {
-    return null;
+    Player player = findAndAuthorizePlayer(authorization);
+    Duel duel = findRunningGame(gameId, player);
+
+    Round round = duel.getRounds().get(roundNumber);
+    if (round == null) {
+      throw new NotFoundException("Round not found!");
+    }
+
+    return new RoundTransferObject(round);
   }
 
   @GetMapping(value = "games/{gameId}/rounds")
