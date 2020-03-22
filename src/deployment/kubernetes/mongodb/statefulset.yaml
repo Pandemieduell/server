@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  selector: {}
+  serviceName: mongo
+  replicas: 1
+  podManagementPolicy: Parallel
+  template:
+    spec:
+      terminationGracePeriodSeconds: 10
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: component
+                    operator: In
+                    values:
+                      - mongo
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: mongo
+          image: mongo
+          command: [mongod, --bind_ip_all, --replSet, rs0]
+          ports:
+            - containerPort: 27017
+              name: mongo
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+        - name: mongo-sidecar
+          image: cvallance/mongo-k8s-sidecar
+          env:
+            - name: MONGO_SIDECAR_POD_LABELS
+              value: component=mongo
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes: [ ReadWriteOnce ]
+        storageClassName: fast
+        resources:
+          requests:
+            storage: 20Gi
