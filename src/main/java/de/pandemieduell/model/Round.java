@@ -5,36 +5,33 @@ import java.util.List;
 
 public class Round {
   private int roundNumber;
-  private List<GovernmentCard> governmentCards;
-  private List<PandemicCard> pandemicCards;
+  private LinkedList<Card> governmentCards;
+  private LinkedList<Card> pandemicCards;
   private StandardWorldState worldState;
-  private List<GameAction> executedActions;
-  private List<Card> playedCards;
+  private LinkedList<Card> playedCards;
 
   public Round(int roundNumber, StandardWorldState worldState) {
     this.roundNumber = roundNumber;
     this.worldState = worldState;
-    this.executedActions = new LinkedList<>();
+    this.governmentCards = new LinkedList<>();
+    this.playedCards = new LinkedList<>();
+    this.pandemicCards = new LinkedList<>();
   }
 
   public int getRoundNumber() {
     return roundNumber;
   }
 
-  public List<GovernmentCard> getGovernmentCards() {
+  public List<Card> getGovernmentCards() {
     return governmentCards;
   }
 
-  public List<PandemicCard> getPandemicCards() {
+  public List<Card> getPandemicCards() {
     return pandemicCards;
   }
 
   public StandardWorldState getWorldState() {
     return worldState;
-  }
-
-  public List<GameAction> getExecutedActions() {
-    return executedActions;
   }
 
   public List<Card> getPlayedCards() {

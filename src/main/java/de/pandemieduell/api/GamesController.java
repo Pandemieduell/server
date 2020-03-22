@@ -12,8 +12,9 @@ import de.pandemieduell.model.GameState;
 import de.pandemieduell.model.Player;
 import de.pandemieduell.model.Round;
 import de.pandemieduell.transferobjects.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +44,8 @@ public class GamesController {
     if (duel == null) throw new NotFoundException("Game not found!");
 
     // check that the player is part of the duel
-    if (player.getId().equals(duel.getGovernmentPlayer().getId())
-        || player.getId().equals(duel.getPandemicPlayer().getId()))
+    if (!(player.getId().equals(duel.getGovernmentPlayer().getId())
+        || player.getId().equals(duel.getPandemicPlayer().getId())))
       throw new UnauthorizedException("Player is not part of this game!");
     return duel;
   }
@@ -61,7 +62,9 @@ public class GamesController {
   @PostMapping(value = "/games")
   public MatchmakingTransferObject joinGame(
       @RequestHeader("Authorization") String authorization,
-      @RequestParam("random") boolean randomMatching) {
+      @RequestParam("random") boolean randomMatching)
+      throws InvocationTargetException, NoSuchMethodException, InstantiationException,
+          IllegalAccessException, ClassNotFoundException {
     Player player = findAndAuthorizePlayer(authorization);
 
     if (randomMatching) {
@@ -100,7 +103,9 @@ public class GamesController {
 
   @PostMapping(value = "/games/{gameId}")
   public MatchmakingTransferObject joinGame(
-      @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
+      @RequestHeader("Authorization") String authorization, @PathVariable String gameId)
+      throws InvocationTargetException, NoSuchMethodException, InstantiationException,
+          IllegalAccessException, ClassNotFoundException {
     Player player = findAndAuthorizePlayer(authorization);
 
     Duel private_duel =
@@ -120,7 +125,9 @@ public class GamesController {
 
   @GetMapping(value = "games/{gameId}")
   public DuelStateTransferObject getGame(
-      @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
+      @RequestHeader("Authorization") String authorization, @PathVariable String gameId)
+      throws NoSuchMethodException, InstantiationException, IllegalAccessException,
+          InvocationTargetException, ClassNotFoundException {
     Player player = findAndAuthorizePlayer(authorization);
     Duel duel = findRunningGame(gameId, player);
 
@@ -131,7 +138,9 @@ public class GamesController {
   public RoundTransferObject getRound(
       @RequestHeader("Authorization") String authorization,
       @PathVariable String gameId,
-      @PathVariable int roundNumber) {
+      @PathVariable int roundNumber)
+      throws InvocationTargetException, NoSuchMethodException, InstantiationException,
+          IllegalAccessException, ClassNotFoundException {
     Player player = findAndAuthorizePlayer(authorization);
     Duel duel = findRunningGame(gameId, player);
 
@@ -145,11 +154,18 @@ public class GamesController {
 
   @GetMapping(value = "games/{gameId}/rounds")
   public List<RoundTransferObject> getRounds(
-      @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
+      @RequestHeader("Authorization") String authorization, @PathVariable String gameId)
+      throws InvocationTargetException, NoSuchMethodException, InstantiationException,
+          IllegalAccessException, ClassNotFoundException {
     Player player = findAndAuthorizePlayer(authorization);
     Duel duel = findRunningGame(gameId, player);
 
-    return duel.getRounds().stream().map(RoundTransferObject::new).collect(Collectors.toList());
+    List<RoundTransferObject> transferObjects = new LinkedList<>();
+    for (Round round : duel.getRounds()) {
+      transferObjects.add(new RoundTransferObject(round));
+    }
+
+    return transferObjects;
   }
 
   @PostMapping(value = "games/{gameId}/card")
@@ -157,11 +173,13 @@ public class GamesController {
       @RequestHeader("Authorization") String authorization,
       @PathVariable String gameId,
       @RequestParam("cardNumber") int cardNumber)
-      throws CloneNotSupportedException {
+      throws CloneNotSupportedException, InvocationTargetException, NoSuchMethodException,
+          InstantiationException, IllegalAccessException, ClassNotFoundException {
     Player player = findAndAuthorizePlayer(authorization);
     Duel duel = findRunningGame(gameId, player);
 
     duel.process_turn(cardNumber, player.getId());
+    mongoTemplate.save(duel, "runningDuels");
   }
 
   @DeleteMapping(value = "game/{gameId}")
