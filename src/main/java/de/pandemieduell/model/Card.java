@@ -7,7 +7,7 @@ public interface Card {
 
   String getDescription();
 
-  List<GameAction> getActions();
+  List<GameAction> getGameActions();
 
   int getNumberOfTickets(int round, WorldState state);
 }

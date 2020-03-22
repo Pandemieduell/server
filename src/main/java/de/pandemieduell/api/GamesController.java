@@ -138,7 +138,8 @@ public class GamesController {
   public void cancelGame(
       @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
     var userCredentials = getUserCredentials(authorization);
-    Player player = findAndAuthorizePlayer(getUserCredentials(authorization));;
+    Player player = findAndAuthorizePlayer(getUserCredentials(authorization));
+    ;
 
     Duel duel = mongoTemplate.findOne(query(where("id").is(gameId)), Duel.class, "running-duels");
     if (duel == null) throw new NotFoundException("Game not found!");
