@@ -1,7 +1,6 @@
 package de.pandemieduell.model;
 
 import de.pandemieduell.api.exceptions.UnprocessableEntryException;
-import de.pandemieduell.api.exceptions.UnprocessableEntryException;
 import java.security.SecureRandom;
 import java.time.temporal.ValueRange;
 import java.util.*;
@@ -142,7 +141,7 @@ public class Duel {
 
   public boolean isGameWon() {
     Round lastRound = this.rounds.get(this.getRoundNumber());
-    if(lastRound.getWorldState().getPopulationMorale() <= 10) {
+    if (lastRound.getWorldState().getPopulationMorale() <= 10) {
       this.gameState = GameState.PANDEMIC_WON;
       return true;
     }
