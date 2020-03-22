@@ -182,7 +182,7 @@ public class GamesController {
     mongoTemplate.save(duel, "runningDuels");
   }
 
-  @DeleteMapping(value = "game/{gameId}")
+  @DeleteMapping(value = "games/{gameId}")
   public void cancelGame(
       @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
     Player player = findAndAuthorizePlayer(authorization);
