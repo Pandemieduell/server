@@ -13,6 +13,7 @@ import de.pandemieduell.model.Player;
 import de.pandemieduell.model.Round;
 import de.pandemieduell.transferobjects.*;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -146,7 +147,10 @@ public class GamesController {
   @GetMapping(value = "games/{gameId}/rounds")
   public List<RoundTransferObject> getRounds(
       @RequestHeader("Authorization") String authorization, @PathVariable String gameId) {
-    return null;
+    Player player = findAndAuthorizePlayer(authorization);
+    Duel duel = findRunningGame(gameId, player);
+
+    return duel.getRounds().stream().map(RoundTransferObject::new).collect(Collectors.toList());
   }
 
   @PostMapping(value = "games/{gameId}/card")
