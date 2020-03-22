@@ -125,6 +125,7 @@ secrets.yml
 .sts4-cache
 
 *.secret.*
+*.secret
 !*.secret.*.encrypted
 *.filled.*
 
