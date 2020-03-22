@@ -1,7 +1,21 @@
 spring:
   main:
     banner-mode: off
-
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /
+---
+spring:
+  profiles: production
+  main:
+    banner-mode: off
+  data:
+    mongodb:
+      authentication-database: admin
+      uri: "mongodb://pandemieduell@mongo-0.mongo,mongo-1.mongo,mongo-2.mongo:27017?authSource=admin"
 management:
   server:
     port: 8081

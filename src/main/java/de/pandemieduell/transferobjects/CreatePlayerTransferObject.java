@@ -1,5 +1,6 @@
 package de.pandemieduell.transferobjects;
 
-public class CreateUserTransferObject {
+public class CreatePlayerTransferObject {
   public String name;
+  public String token;
 }

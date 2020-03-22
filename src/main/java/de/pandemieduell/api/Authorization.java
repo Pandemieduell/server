@@ -9,7 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 public final class Authorization {
   private Authorization() {}
 
-  public static UserCredentials getUserCredentials(String authorization) {
+  public static PlayerCredentials getPlayerCredentials(String authorization) {
     if (authorization == null) {
       throw new ResponseStatusException(UNAUTHORIZED, "No authorization was provided!");
     }
@@ -30,6 +30,6 @@ public final class Authorization {
       throw new ResponseStatusException(
           UNAUTHORIZED, "Bad authorization was provided: missing password!");
     }
-    return new UserCredentials(values[0], values[1]);
+    return new PlayerCredentials(values[0], values[1]);
   }
 }

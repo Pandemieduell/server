@@ -5,3 +5,13 @@ resources:
   - service.yaml
   - certificate.yaml
   - ingress.yaml
+
+configMapGenerator:
+  - name: init-mongo
+    files:
+      - init-mongo.js
+
+secretGenerator:
+  - name: server
+    files:
+      - mongo.secret

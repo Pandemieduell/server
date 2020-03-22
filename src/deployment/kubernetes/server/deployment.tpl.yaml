@@ -12,6 +12,12 @@ spec:
       containers:
         - name: server
           image: $DOCKER_IMAGE
+          env:
+            - name: SPRING_DATA_MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: server
+                  key: mongo.secret
           ports:
             - containerPort: 8080
               name: web
@@ -31,6 +37,27 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 2
+#      initContainers:
+#        - name: mongo-init
+#          image: mongo
+#          command: [bash, -c, 'mongo mongodb://mongo-0.mongo < /bin/init-mongo.js']
+#          volumeMounts:
+#            - mountPath: /bin/init-mongo.js
+#              name: init-mongo
+#              subPath: init-mongo.js
+#          env:
+#            - name: MONGO_INITDB_ROOT_USERNAME
+#              value: pandemieduell
+#            - name: MONGO_INITDB_ROOT_PASSWORD
+#              valueFrom:
+#                secretKeyRef:
+#                  name: server
+#                  key: mongo.secret
+      volumes:
+        - name: init-mongo
+          configMap:
+            name: init-mongo
+
 
   strategy:
     type: RollingUpdate
