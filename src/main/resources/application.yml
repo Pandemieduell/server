@@ -15,7 +15,7 @@ spring:
   data:
     mongodb:
       authentication-database: admin
-      uri: mongodb://pandemieduell:${MONGODB_PASSWORD}@mongo-0.mongo.default.svc.cluster.local,mongo-1.mongo.default.svc.cluster.local,mongo-2.mongo.default.svc.cluster.local:27017/pandemieduell?authSource=admin
+      uri: mongodb://pandemieduell:${MONGODB_PASSWORD}@mongo-0.mongo.default.svc.cluster.local:27017/pandemieduell?authSource=admin
 
 management:
   server:
